@@ -45,7 +45,25 @@ Cheap pads sometimes advertise FTMS but send zeros. With the belt running and th
 5. Optional: press ⌘U with a simulator selected to run the unit tests.
 
 With a free Apple ID the app stops launching after 7 days; reconnect and press ▶ again.
-A paid Apple Developer membership removes that limit.
+With a paid Apple Developer membership an Xcode install lasts a year.
+
+### Optional: install through TestFlight (private, never published)
+
+Needs the paid Apple Developer Program. Builds expire after 90 days, so upload a new one before then.
+
+1. **App Store Connect → Apps → + → New App.** Platform iOS, any name not already taken on the
+   App Store (e.g. "TreadSync <your initials>"), your bundle ID, any SKU. This only creates a private
+   record; nothing is submitted for review or published.
+2. **Xcode:** select *Any iOS Device (arm64)* as the destination → **Product → Archive**.
+3. In the Organizer window that opens: **Distribute App → TestFlight Internal Only** → Upload.
+   Leave "Manage Version and Build Number" ticked so each upload gets a new build number.
+4. Wait for the build to finish processing (5–30 min; you'll get an email).
+5. **App Store Connect → your app → TestFlight → Internal Testing → +** to create a group and add
+   yourself (and anyone else on your developer account).
+6. On the iPhone, install the **TestFlight** app, accept the invite and install TreadSync.
+
+Internal testing doesn't go through Beta App Review. Only *external* testers (people not on your
+developer account) would need that.
 
 ## 3. Use it
 
