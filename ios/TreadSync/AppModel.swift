@@ -18,6 +18,15 @@ final class AppModel {
     private(set) var isSaving = false
     private var bodyMassKg = 75.0
 
+    /// The treadmill's incline is set by hand, so the user tells us. Remembered between launches,
+    /// and changing it mid-workout applies from that moment on.
+    var manualInclinePercent: Double = UserDefaults.standard.double(forKey: "manualInclinePercent") {
+        didSet {
+            UserDefaults.standard.set(manualInclinePercent, forKey: "manualInclinePercent")
+            session?.manualInclinePercent = manualInclinePercent
+        }
+    }
+
     var isRecording: Bool { session != nil && session?.isFinished == false }
 
     init() {
@@ -40,7 +49,8 @@ final class AppModel {
 
     func start() {
         message = nil
-        session = WorkoutSession(startDate: Date(), bodyMassKg: bodyMassKg)
+        session = WorkoutSession(startDate: Date(), bodyMassKg: bodyMassKg,
+                                 manualInclinePercent: manualInclinePercent)
     }
 
     func discard() {

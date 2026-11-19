@@ -118,6 +118,39 @@ final class WorkoutSessionTests: XCTestCase {
         XCTAssertEqual(s.elevationGainM, 100, accuracy: 1e-9)
     }
 
+    func testManualInclineUsedWhenTreadmillReportsZero() {
+        var s = WorkoutSession(startDate: t0, manualInclinePercent: 10)
+        s.ingest(TreadmillData(speedKmh: 0, totalDistanceM: 0, inclinePercent: 0), at: at(1))
+        s.ingest(TreadmillData(speedKmh: 4, totalDistanceM: 500, inclinePercent: 0), at: at(2))
+        XCTAssertEqual(s.elevationGainM, 50, accuracy: 1e-9)
+    }
+
+    func testManualInclineChangeAppliesFromThenOn() {
+        var s = WorkoutSession(startDate: t0, manualInclinePercent: 0)
+        s.ingest(TreadmillData(speedKmh: 0, totalDistanceM: 0), at: at(1))
+        s.ingest(TreadmillData(speedKmh: 4, totalDistanceM: 500), at: at(2))
+        s.manualInclinePercent = 13
+        s.ingest(TreadmillData(speedKmh: 4, totalDistanceM: 1000), at: at(3))
+        XCTAssertEqual(s.elevationGainM, 65, accuracy: 1e-9)
+    }
+
+    func testReportedInclineOverridesManual() {
+        var s = WorkoutSession(startDate: t0, manualInclinePercent: 13)
+        s.ingest(TreadmillData(speedKmh: 0, totalDistanceM: 0, inclinePercent: 5), at: at(1))
+        s.ingest(TreadmillData(speedKmh: 4, totalDistanceM: 1000, inclinePercent: 5), at: at(2))
+        XCTAssertEqual(s.elevationGainM, 50, accuracy: 1e-9)
+    }
+
+    func testManualInclineRaisesCalories() {
+        var flat = WorkoutSession(startDate: t0)
+        var hill = WorkoutSession(startDate: t0, manualInclinePercent: 13)
+        for i in 0...60 {
+            flat.ingest(TreadmillData(speedKmh: 4), at: at(Double(i)))
+            hill.ingest(TreadmillData(speedKmh: 4), at: at(Double(i)))
+        }
+        XCTAssertGreaterThan(hill.activeKcal, flat.activeKcal * 2)
+    }
+
     func testIntervalsSumToTotals() {
         var s = WorkoutSession(startDate: t0)
         for i in 0...300 {

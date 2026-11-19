@@ -24,6 +24,9 @@ struct WorkoutSession {
     private(set) var maxSpeedKmh = 0.0
     private(set) var points: [Point]
     var bodyMassKg: Double
+    /// Incline set by hand on the treadmill (it can't report it). Can change mid-workout;
+    /// applies to readings from then on. Ignored if the treadmill reports a non-zero incline.
+    var manualInclinePercent: Double
 
     // Distance bookkeeping for the treadmill's own odometer.
     private var baselineM: Double?
@@ -36,9 +39,10 @@ struct WorkoutSession {
     /// Odometer going backwards by more than this is treated as the treadmill resetting.
     static let resetThresholdM = 10.0
 
-    init(startDate: Date, bodyMassKg: Double = 75) {
+    init(startDate: Date, bodyMassKg: Double = 75, manualInclinePercent: Double = 0) {
         self.startDate = startDate
         self.bodyMassKg = bodyMassKg
+        self.manualInclinePercent = manualInclinePercent
         self.points = [Point(date: startDate, distanceM: 0, activeKcal: 0)]
     }
 
@@ -76,7 +80,8 @@ struct WorkoutSession {
 
         let delta = newDistance - distanceM
         distanceM = newDistance
-        let grade = max(0, (d.inclinePercent ?? 0) / 100)
+        let reportedIncline = d.inclinePercent ?? 0
+        let grade = max(0, (reportedIncline != 0 ? reportedIncline : manualInclinePercent) / 100)
         elevationGainM += delta * grade
         activeKcal += Self.activeKcalPerMinute(speedKmh: speed, grade: grade, massKg: bodyMassKg) * usableDt / 60
         maxSpeedKmh = max(maxSpeedKmh, speed)

@@ -79,7 +79,9 @@ developer account) would need that.
   integrates belt speed instead. A treadmill reset mid-workout is handled.
 - **Calories** are estimated using the ACSM walking/running equations, with your weight from
   Apple Health (75 kg if none). The treadmill's own calorie figure is ignored.
-- **Climb** is estimated from incline × distance and saved as the workout's elevation gain.
+- **Incline:** this treadmill's incline is set by hand and isn't reported over Bluetooth, so set it in the
+  app with the *Incline (set by hand)* stepper. It's remembered, and changing it mid-workout applies from then on.
+  Climb (incline × distance, saved as elevation gain) and the calorie estimate both use it.
 - **Walk or run:** *Auto* picks Run when the average speed is 8 km/h or more.
 - **Apple Watch:** don't also start an Indoor Walk on the watch, or you'll get two workouts.
 - If your running app doesn't show the workout, check that its Apple Health import is turned on.

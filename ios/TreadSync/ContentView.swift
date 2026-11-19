@@ -12,7 +12,9 @@ struct ContentView: View {
                     LabeledContent("Device", value: t.deviceName ?? "—")
                     LabeledContent("Speed", value: fmt(t.latest.speedKmh, "%.1f km/h"))
                     LabeledContent("Treadmill distance", value: fmt(t.latest.totalDistanceM, "%.0f m"))
-                    LabeledContent("Incline", value: fmt(t.latest.inclinePercent, "%.1f %%"))
+                    Stepper(value: $model.manualInclinePercent, in: 0...15, step: 1) {
+                        LabeledContent("Incline (set by hand)", value: String(format: "%.0f %%", model.manualInclinePercent))
+                    }
                     LabeledContent("Treadmill time", value: t.latest.elapsedTimeS.map { clock($0) } ?? "—")
                     HStack {
                         Button("Reconnect") { t.connect() }
