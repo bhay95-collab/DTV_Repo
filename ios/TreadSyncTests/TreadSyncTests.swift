@@ -20,6 +20,18 @@ final class FTMSParserTests: XCTestCase {
         XCTAssertNil(t.heartRateBpm)
     }
 
+    func testRealRhythmFunPacket() throws {
+        // Captured from the YPTM02f470 walking pad with nRF Connect, belt at 7.5 km/h.
+        let t = try XCTUnwrap(FTMS.parseTreadmillData(
+            data("9E 04 EE 02 00 00 A6 00 00 00 00 00 00 00 00 00 00 08 00 00 00 00 B2 01")))
+        XCTAssertEqual(t.speedKmh, 7.5)
+        XCTAssertEqual(t.averageSpeedKmh, 0)
+        XCTAssertEqual(t.totalDistanceM, 166)
+        XCTAssertEqual(t.inclinePercent, 0)
+        XCTAssertEqual(t.totalEnergyKcal, 8)
+        XCTAssertEqual(t.elapsedTimeS, 434)
+    }
+
     func testMoreDataBitMeansNoSpeed() throws {
         // flags 0x0005: More Data set (no speed), distance present
         let t = try XCTUnwrap(FTMS.parseTreadmillData(data("05 00 10 27 00")))

@@ -16,6 +16,17 @@ class ParseTreadmillData(unittest.TestCase):
         self.assertEqual(t["elapsed_time_s"], 600)
         self.assertNotIn("unparsed_trailing_bytes", t)
 
+    def test_real_rhythm_fun_packet(self):
+        # Captured from the YPTM02f470 walking pad with nRF Connect, belt at 7.5 km/h.
+        t = parse_treadmill_data(from_hex("9E04 EE02 0000 A600 0000 0000 0000 0000 0008 0000 0000 B201"))
+        self.assertEqual(t["flags"], "0x049E")
+        self.assertEqual(t["speed_kmh"], 7.5)
+        self.assertEqual(t["total_distance_m"], 166)
+        self.assertEqual(t["incline_percent"], 0.0)
+        self.assertEqual(t["total_energy_kcal"], 8)
+        self.assertEqual(t["elapsed_time_s"], 434)
+        self.assertNotIn("unparsed_trailing_bytes", t)
+
     def test_more_data_bit_means_no_speed(self):
         t = parse_treadmill_data(from_hex("05 00 10 27 00"))
         self.assertNotIn("speed_kmh", t)
